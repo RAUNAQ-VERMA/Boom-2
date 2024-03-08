@@ -1,0 +1,4 @@
+*.dll filter=lfs
+*.dylib filter=lfs
+*.so filter=lfs
+/Library/ArtifactDB filter=lfs
