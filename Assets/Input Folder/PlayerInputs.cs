@@ -98,6 +98,15 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Test"",
+                    ""type"": ""Button"",
+                    ""id"": ""36bf7eb9-31d0-445e-86b6-344082449ab3"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -287,6 +296,17 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
                     ""action"": ""Attack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9da12a9d-deab-40ed-acf6-6a3410fea781"",
+                    ""path"": ""<Mouse>/forwardButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""Test"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -331,6 +351,7 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
         m_Player_InGame_Attack = m_Player_InGame.FindAction("Attack", throwIfNotFound: true);
         m_Player_InGame_Reload = m_Player_InGame.FindAction("Reload", throwIfNotFound: true);
         m_Player_InGame_PickUp = m_Player_InGame.FindAction("PickUp", throwIfNotFound: true);
+        m_Player_InGame_Test = m_Player_InGame.FindAction("Test", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -400,6 +421,7 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_InGame_Attack;
     private readonly InputAction m_Player_InGame_Reload;
     private readonly InputAction m_Player_InGame_PickUp;
+    private readonly InputAction m_Player_InGame_Test;
     public struct Player_InGameActions
     {
         private @PlayerInputs m_Wrapper;
@@ -412,6 +434,7 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
         public InputAction @Attack => m_Wrapper.m_Player_InGame_Attack;
         public InputAction @Reload => m_Wrapper.m_Player_InGame_Reload;
         public InputAction @PickUp => m_Wrapper.m_Player_InGame_PickUp;
+        public InputAction @Test => m_Wrapper.m_Player_InGame_Test;
         public InputActionMap Get() { return m_Wrapper.m_Player_InGame; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -445,6 +468,9 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
             @PickUp.started += instance.OnPickUp;
             @PickUp.performed += instance.OnPickUp;
             @PickUp.canceled += instance.OnPickUp;
+            @Test.started += instance.OnTest;
+            @Test.performed += instance.OnTest;
+            @Test.canceled += instance.OnTest;
         }
 
         private void UnregisterCallbacks(IPlayer_InGameActions instance)
@@ -473,6 +499,9 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
             @PickUp.started -= instance.OnPickUp;
             @PickUp.performed -= instance.OnPickUp;
             @PickUp.canceled -= instance.OnPickUp;
+            @Test.started -= instance.OnTest;
+            @Test.performed -= instance.OnTest;
+            @Test.canceled -= instance.OnTest;
         }
 
         public void RemoveCallbacks(IPlayer_InGameActions instance)
@@ -518,5 +547,6 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
         void OnAttack(InputAction.CallbackContext context);
         void OnReload(InputAction.CallbackContext context);
         void OnPickUp(InputAction.CallbackContext context);
+        void OnTest(InputAction.CallbackContext context);
     }
 }

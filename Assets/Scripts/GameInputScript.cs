@@ -7,6 +7,7 @@ public class GameInput : NetworkBehaviour
 {
     public EventHandler OnAttackAction;
     public EventHandler OnJumpAction;
+    public EventHandler OnTestAction;
 
     public EventHandler OnPickUpAction;
     public static GameInput Instance;
@@ -23,6 +24,15 @@ public class GameInput : NetworkBehaviour
         playerInputs.Player_InGame.Attack.performed += Attack_performed;
         playerInputs.Player_InGame.Jump.performed += Jump_performed;
         playerInputs.Player_InGame.PickUp.performed += PickUp_performed;
+        //this is for testing purpose delete in the final build
+        playerInputs.Player_InGame.Test.performed += Test_performed;
+
+    }
+
+//this is for testing and to be deleted
+    private void Test_performed(InputAction.CallbackContext context)
+    {
+        OnTestAction? .Invoke(this, EventArgs.Empty);
     }
 
     private void Jump_performed(InputAction.CallbackContext context)
@@ -50,7 +60,6 @@ public class GameInput : NetworkBehaviour
     }
     public Vector3 GetGamepadInput(){
         return playerInputs.Player_InGame.Gamepad_Look.ReadValue<Vector2>();
-       
     }
     public string GetControlScheme(){
         return playerInput.currentControlScheme.ToString();

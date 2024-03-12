@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 3460100373360380577}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.772, y: -0.684, z: 1.05}
+  m_LocalPosition: {x: 0.29, y: -0.684, z: -0.09}
   m_LocalScale: {x: 1, y: 1.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -428,6 +428,10 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: aeecc6b0-9d21-421b-b8ef-04787996c06d
     m_ActionName: 'Player_InGame/PickUp[/Keyboard/e,/XInputControllerWindows/buttonWest]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 36bf7eb9-31d0-445e-86b6-344082449ab3
+    m_ActionName: 'Player_InGame/Test[/Mouse/forwardButton]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player_InGame

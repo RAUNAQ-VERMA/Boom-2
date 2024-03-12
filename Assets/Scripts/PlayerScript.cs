@@ -56,6 +56,8 @@ public class PlayerScript : NetworkBehaviour,IWeaponParent
     private void GameInput_OnAttackAction(object sender, EventArgs e)
     {
         //On attack code goes here
+        Debug.Log("Attack");
+        currentWeaponObject.Shoot();
     }
 
     public void Update()
@@ -126,8 +128,9 @@ public class PlayerScript : NetworkBehaviour,IWeaponParent
     }
 
     private void Interact(PlayerScript player){
+        
         SetCurrentWeapon(currentWeaponObject);
-        Debug.Log("|"+currentWeaponObject + "||        "+player+"|");
+        Debug.Log("|"+currentWeaponObject + "||"+player+"|");
         currentWeaponObject.SetWeaponParent(player);// weapon object is blank for client
     }
 

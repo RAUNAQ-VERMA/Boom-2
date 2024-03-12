@@ -1,7 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Threading;
 using UnityEngine;
 
 public class WeaponSpawnerScript : MonoBehaviour
@@ -10,18 +7,11 @@ public class WeaponSpawnerScript : MonoBehaviour
 
     void Start()
     {
-        GameInput.Instance.OnAttackAction += SpawnWeapon;
-        
+        GameInput.Instance.OnTestAction += SpawnWeapon;
     }
 
     private void SpawnWeapon(object sender, EventArgs e)
     {
         WeaponSpawnLogicScript.Instance.SpawnWeapon();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
