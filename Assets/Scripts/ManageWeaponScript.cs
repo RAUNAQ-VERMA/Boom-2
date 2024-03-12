@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 
 public class ManageWeaponScript : NetworkBehaviour
 {
-    [SerializeField] private WeaponSpawnScript weaponSpawner;
+    [SerializeField] private WeaponSpawnLogicScript weaponSpawner;
     [SerializeField]private List<GameObject> weapons;
     [SerializeField]private Transform weaponHolder;
     [SerializeField]private new Camera camera;

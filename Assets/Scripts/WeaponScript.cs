@@ -21,8 +21,8 @@ public class WeaponScript : NetworkBehaviour
         followTransform = GetComponent<FollowPlayerScript>();
     }
 
-    public static void SpawnWeapon(IWeaponParent weaponObjectParent){
-        WeaponSpawnScript.Instance.SpawnWeapon(weaponObjectParent);
+    public static void SpawnWeapon(){
+        WeaponSpawnLogicScript.Instance.SpawnWeapon();
     }
     public void SetWeaponParent(IWeaponParent weaponObjectParent)
     {

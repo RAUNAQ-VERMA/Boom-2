@@ -14,9 +14,8 @@ public class PlayerScript : NetworkBehaviour,IWeaponParent
     
     
     private WeaponScript currentWeaponObject;
-    
 
-    
+       
     private bool isOnGround = false;
     [SerializeField] private float gravity = -19.81f;
     private Vector3 verticalVelocity;
@@ -35,12 +34,9 @@ public class PlayerScript : NetworkBehaviour,IWeaponParent
 
     public override void OnNetworkSpawn()
     {
-        WeaponScript.SpawnWeapon(this);
     }
     private void Start()
     {
-        //TODO: playerInput Object reference not set to an instance of an object
-        
         Cursor.lockState = CursorLockMode.Locked;
         GameInput.Instance.OnAttackAction += GameInput_OnAttackAction;
         GameInput.Instance.OnJumpAction += GameInput_OnJumpAction;
@@ -71,7 +67,6 @@ public class PlayerScript : NetworkBehaviour,IWeaponParent
         ManageMovement();
 
         ManageJump();
-        
         
         if (GameInput.Instance.GetControlScheme().Equals("Keyboard"))
         {
@@ -132,8 +127,8 @@ public class PlayerScript : NetworkBehaviour,IWeaponParent
 
     private void Interact(PlayerScript player){
         SetCurrentWeapon(currentWeaponObject);
-        Debug.Log(currentWeaponObject + "||        "+player);
-        currentWeaponObject.SetWeaponParent(player);// weapon object is blank
+        Debug.Log("|"+currentWeaponObject + "||        "+player+"|");
+        currentWeaponObject.SetWeaponParent(player);// weapon object is blank for client
     }
 
     private void OnTriggerEnter(Collider other)
@@ -177,6 +172,6 @@ public class PlayerScript : NetworkBehaviour,IWeaponParent
 
     public void SetCurrentWeapon(WeaponScript weaponObject)
     {
-        this.currentWeaponObject = weaponObject;
+        currentWeaponObject = weaponObject;
     }
 }
