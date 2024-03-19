@@ -55,8 +55,6 @@ public class PlayerScript : NetworkBehaviour,IWeaponParent
 
     private void GameInput_OnAttackAction(object sender, EventArgs e)
     {
-        //On attack code goes here
-        Debug.Log("Attack");
         currentWeaponObject.Shoot();
     }
 

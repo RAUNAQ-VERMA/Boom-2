@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class WeaponScript : NetworkBehaviour
 {
- // Start is called before the first frame update
     [SerializeField] public GunSO gunSO;
 
     private float timeSinceLastShot;

@@ -56,7 +56,7 @@ Transform:
   m_GameObject: {fileID: 4601104418939950089}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.73, z: 0}
+  m_LocalPosition: {x: 0, y: -0.76, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -90,7 +90,7 @@ Transform:
   m_GameObject: {fileID: 7499641367072382578}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.35, z: 0}
+  m_LocalPosition: {x: 0, y: 1.24, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -533,17 +533,17 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 2767a2bacd939454cb7e37c340996c4a,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.0057704
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2767a2bacd939454cb7e37c340996c4a,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.712
+      value: -0.71
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2767a2bacd939454cb7e37c340996c4a,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.046788
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2767a2bacd939454cb7e37c340996c4a,
         type: 3}
@@ -584,6 +584,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: 2767a2bacd939454cb7e37c340996c4a,
+        type: 3}
+      propertyPath: m_Avatar
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: 2767a2bacd939454cb7e37c340996c4a,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 462cf3b5aec4e2f41932b7deb0c307a1, type: 2}
+    - target: {fileID: 5866666021909216657, guid: 2767a2bacd939454cb7e37c340996c4a,
+        type: 3}
+      propertyPath: m_AnimatePhysics
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: 2767a2bacd939454cb7e37c340996c4a,
+        type: 3}
+      propertyPath: m_WarningMessage
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
