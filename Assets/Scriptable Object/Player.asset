@@ -9,17 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d53c199f781b7e641a9e85c0ac3c7ea7, type: 3}
-  m_Name: ShotgunSO
+  m_Script: {fileID: 11500000, guid: 2bb8809b6914f0644813500df0854a16, type: 3}
+  m_Name: Player
   m_EditorClassIdentifier: 
-  type: Gun
-  name: Shotgun
-  weaponIndex: 1
-  damage: 10
-  maxDistance: 7
-  fireRate: 60
-  reloadTime: 0
-  recoil: 0
-  magazineSize: 10000000
-  currentAmmo: 9999933
-  reloading: 0
+  id: 0

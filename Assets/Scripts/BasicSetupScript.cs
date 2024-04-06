@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -8,6 +6,12 @@ public class BasicSetupScript : NetworkBehaviour
     [SerializeField] Behaviour[] componentsToDisable;
     private Camera sceneCamera;
 
+    public override void OnNetworkSpawn(){
+        string networkId = GetComponent<NetworkObject>().OwnerClientId.ToString();
+        PlayerScript player = GetComponent<PlayerScript>();
+        GameManagerScript.Instance.RegisterPlayer(networkId,player);
+        Debug.Log(networkId);
+    }
     void Start()
     {
         if(!IsLocalPlayer){
@@ -20,12 +24,12 @@ public class BasicSetupScript : NetworkBehaviour
             if(sceneCamera!=null){
                 sceneCamera.gameObject.SetActive(false);
             }
-            
         }
     }
     private void OnDisable() {
         if(sceneCamera!=null){
             sceneCamera.gameObject.SetActive(true);
         }
+        GameManagerScript.Instance.UnRegisterPlayer(transform.name);
     }
 }

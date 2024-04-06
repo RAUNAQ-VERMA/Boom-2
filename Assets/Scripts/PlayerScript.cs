@@ -4,20 +4,21 @@ using UnityEngine;
 
 public class PlayerScript : NetworkBehaviour,IWeaponParent
 {
-    
     [SerializeField] private Transform cameraTransform;
     [SerializeField] private Transform groundDetector;
     [SerializeField] private CharacterController controller;
     [SerializeField] private Transform playerTransform;
     [SerializeField] private LayerMask layerMask;
     [SerializeField] private Transform weaponHolder;
+    [SerializeField] private PlayerSO playerInfo;
     
     
     private WeaponScript currentWeaponObject;
 
+    public static PlayerScript LocalInstance{get;private set;}
        
-    private bool isOnGround = false;
     [SerializeField] private float gravity = -19.81f;
+    private bool isOnGround = false;
     private Vector3 verticalVelocity;
     private float movementSpeed = 10f;
     public float groundDistance = 0.4f;
@@ -30,22 +31,27 @@ public class PlayerScript : NetworkBehaviour,IWeaponParent
     private float gamepadRotation=0f;
     private float gamepadXSensitivity = 100f, gamepadYSensitivity = 5f;
     private bool canEquipWeapon = false;
-
+    private static bool isFirstPlayer = true;
 
     public override void OnNetworkSpawn()
     {
+        LocalInstance =this;
+        SetIdAndTransformOfPlayer();
     }
+
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
-        GameInput.Instance.OnAttackAction += GameInput_OnAttackAction;
+       // GameInput.Instance.OnAttackAction += GameInput_OnAttackAction;
         GameInput.Instance.OnJumpAction += GameInput_OnJumpAction;
         GameInput.Instance.OnPickUpAction += GameInput_OnPickUpAction;
     }
 
     private void GameInput_OnPickUpAction(object sender, EventArgs e)
     {
-        Interact(this);
+        if(canEquipWeapon){
+            Interact(this);
+        }
     }
 
     private void GameInput_OnJumpAction(object sender, EventArgs e)
@@ -55,7 +61,10 @@ public class PlayerScript : NetworkBehaviour,IWeaponParent
 
     private void GameInput_OnAttackAction(object sender, EventArgs e)
     {
-        currentWeaponObject.Shoot();
+        if(IsOwner){
+           // currentWeaponObject.Shoot(cameraTransform);
+           gameObject.GetComponent<PlayerShootScript>().Shoot(cameraTransform);
+        }
     }
 
     public void Update()
@@ -74,7 +83,7 @@ public class PlayerScript : NetworkBehaviour,IWeaponParent
             ManageCameraMovement(mouseInput);
         }
 
-         if(GameInput.Instance.GetControlScheme().Equals("Gamepad"))
+        if(GameInput.Instance.GetControlScheme().Equals("Gamepad"))
         {    
             Vector2 gamepadInput = GameInput.Instance.GetGamepadInput();
             ManageGamepadLook(gamepadInput);
@@ -126,16 +135,35 @@ public class PlayerScript : NetworkBehaviour,IWeaponParent
     }
 
     private void Interact(PlayerScript player){
-        
-        SetCurrentWeapon(currentWeaponObject);
-        Debug.Log("|"+currentWeaponObject + "||"+player+"|");
-        currentWeaponObject.SetWeaponParent(player);// weapon object is blank for client
+        // weapon object is blank for client
+        if(IsOwner){
+            SetCurrentWeapon(currentWeaponObject);
+            Debug.Log("|"+currentWeaponObject + "||"+player+"|");
+            currentWeaponObject.SetWeaponParent(player);
+        }
+    }
+
+    public void SetIdAndTransformOfPlayer(){
+        transform.SetPositionAndRotation(new Vector3(1,2,-16),new Quaternion(0,0,0,0));
+        playerInfo.id =2;
+        if(isFirstPlayer){
+            transform.SetPositionAndRotation(new Vector3(-1,2,-16),new Quaternion(0,0,0,0));
+            isFirstPlayer = false;
+            playerInfo.id =1;
+        }
+    }
+
+    public void DoDamage(Vector3 bulletDirection, GunSO gunInfo){
+        Vector3 knockback = transform.forward + (bulletDirection * gunInfo.damage);
+        controller.Move(knockback);
+        knockback = Vector3.zero;
+        Debug.Log(name);
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        currentWeaponObject = other.GetComponent<WeaponScript>();
-        if(currentWeaponObject!=null){
+        if(other.TryGetComponent<WeaponScript>(out currentWeaponObject))
+        {
             canEquipWeapon = true;
         }
         
@@ -145,6 +173,9 @@ public class PlayerScript : NetworkBehaviour,IWeaponParent
         canEquipWeapon = false;
     }
 
+    public int GetPlayerId(){
+        return playerInfo.id;
+    }
     
     public Transform GetWeaponHolderTransform()
     {

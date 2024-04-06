@@ -1,25 +1,18 @@
-using System;
 using Unity.Netcode;
 using UnityEngine;
 
 public class WeaponScript : NetworkBehaviour
 {
-    [SerializeField] public GunSO gunSO;
+    [SerializeField] private GunSO gunSO;
 
     private float timeSinceLastShot;
 
-
+    private Transform cameraTransform;
     private IWeaponParent weaponObjectParent;
 
     private FollowPlayerScript followTransform;
     private void Awake() {
         followTransform = GetComponent<FollowPlayerScript>();
-    }
-
-    private void GameInput_OnAttack(object sender, EventArgs e)
-    {
-        Debug.Log("Attacking");
-        Shoot();
     }
     public static void SpawnWeapon(){
         WeaponSpawnLogicScript.Instance.SpawnWeapon();
@@ -51,27 +44,47 @@ public class WeaponScript : NetworkBehaviour
         weaponObjectParent.SetCurrentWeapon(this);
         GetComponent<BoxCollider>().enabled = false;
         followTransform.SetTargetTransform(weaponObjectParent.GetWeaponHolderTransform());
+        PlayerShootScript.OnWeaponChange(gunSO);
+        
     }
 
     public IWeaponParent GetWeaponParent(){
         return weaponObjectParent;
     }
-    public void Shoot()
+    public void Shoot(Transform cameraTransform)
     {
-        if (gunSO.currentAmmo > 0)
+        if(!IsOwner){
+            return;
+        }
+        this.cameraTransform = cameraTransform;
+        Shoot_ServerRpc();
+
+    }
+    [ServerRpc(RequireOwnership =false)]
+    private void Shoot_ServerRpc(){
+        Shoot_ClientRpc();
+    }
+    [ClientRpc]
+    private void Shoot_ClientRpc(){
+       if (gunSO.currentAmmo > 0)
         {
             if (CanShoot())
             {
-                if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hitInfo, gunSO.maxDistance))
+                if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out RaycastHit hitInfo, gunSO.maxDistance))
                 {
-                    Debug.Log(hitInfo.transform.name);
+                    Debug.Log(hitInfo.transform.name +" || " +hitInfo.transform.tag);
+                    if(hitInfo.transform.tag == "Player"){
+                        PlayerScript player= GameManagerScript.Instance.GetPlayerFromId(hitInfo.transform.name);
+                        ManageDamageScript damage = player.GetComponent<ManageDamageScript>();
+                        damage.ReciveDamage(gunSO,cameraTransform.forward);
+                       // DamageLogicScript.Instance.ReciveDamage(gunSO,transform.forward,hitInfo.transform.name.ToString());
+                       // player.GetComponent<ManageDamageScript>().ReciveDamage(gunSO,cameraTransform.forward);
+                    }
                 }
                 gunSO.currentAmmo--;
                 timeSinceLastShot = 0;
-
             }
         }
-
     }
     private bool CanShoot() => !gunSO.reloading && timeSinceLastShot > 1f / (gunSO.fireRate / 60f);
 

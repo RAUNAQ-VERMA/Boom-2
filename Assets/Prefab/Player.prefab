@@ -215,6 +215,8 @@ GameObject:
   - component: {fileID: 7743994171078419482}
   - component: {fileID: 6574497544275355035}
   - component: {fileID: 2769491609914082035}
+  - component: {fileID: 8209517429038396450}
+  - component: {fileID: 4086789655689699691}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -487,6 +489,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   weaponHolder: {fileID: 1154909868780774506}
+  playerInfo: {fileID: 11400000, guid: 0cc773245e7df244da0e5df5150cde30, type: 2}
   gravity: -29.43
   groundDistance: 0.6
   jumpHeight: 3
@@ -507,6 +510,32 @@ MonoBehaviour:
   - {fileID: 4292591558269771593}
   - {fileID: 6574497544275355035}
   - {fileID: 9044043223614468059}
+--- !u!114 &8209517429038396450
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7994472128001272233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 698358d622484d74cbe7c5da9e5e479d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  controller: {fileID: 918441136559762249}
+--- !u!114 &4086789655689699691
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7994472128001272233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25ba5bfdd7911dc49bde9d9eef07fd2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cameraTransform: {fileID: 3668038689187846040}
 --- !u!1001 &4407125821628966625
 PrefabInstance:
   m_ObjectHideFlags: 0
