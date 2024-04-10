@@ -1,6 +1,5 @@
 using UnityEngine;
 using Unity.Netcode;
-using Unity.VisualScripting;
 using System;
 
 public class PlayerShootScript : NetworkBehaviour
@@ -25,21 +24,9 @@ public class PlayerShootScript : NetworkBehaviour
     private void Update()
     {
         timeSinceLastShot += Time.deltaTime;
-        Debug.DrawRay(transform.position, transform.forward);
     }
 
     public void Shoot(Transform cameraTransform){
-        this.cameraTransform = cameraTransform;
-        Shoot_ServerRpc();
-    }
-
-    [ServerRpc(RequireOwnership =false)]
-    private void Shoot_ServerRpc(){
-        Shoot_ClientRpc();
-    }
-
-    [ClientRpc]
-    private void Shoot_ClientRpc(){
         if(!IsOwner||gunSO==null){
             return;
         }
@@ -50,11 +37,20 @@ public class PlayerShootScript : NetworkBehaviour
                 if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out RaycastHit hitInfo, gunSO.maxDistance))
                 {
                     Debug.Log(hitInfo.transform.name +" || " +hitInfo.transform.tag);
-                    if(hitInfo.transform.tag == "Player"){
+                    if(hitInfo.transform.tag == "Player")
+                    {
                         PlayerScript player= GameManagerScript.Instance.GetPlayerFromId(hitInfo.transform.name);
                         ManageDamageScript damage = player.GetComponent<ManageDamageScript>();
-                        damage.ReciveDamage(gunSO,cameraTransform.forward);
-                       // DamageLogicScript.Instance.ReciveDamage(gunSO,transform.forward,hitInfo.transform.name.ToString());
+                        DamageEventArgs damageInfo = new()
+                        {
+                            playerId = hitInfo.transform.name,
+                            gunInfo = gunSO,
+                            bulletTransform = transform.forward
+                        };
+                        //OnDamage?.Invoke(this,damageInfo);
+                        DamageLogicScript.OnDamage?.Invoke(this , damageInfo);
+                        //damage.ReciveDamage(gunSO,cameraTransform.forward);
+                      //  DamageLogicScript.Instance.ReciveDamage(gunSO,transform.forward,hitInfo.transform.name.ToString());
                        // player.GetComponent<ManageDamageScript>().ReciveDamage(gunSO,cameraTransform.forward);
                     }
                 }
@@ -63,6 +59,5 @@ public class PlayerShootScript : NetworkBehaviour
             }
         }
     }
-
     private bool CanShoot() => !gunSO.reloading && timeSinceLastShot > 1f / (gunSO.fireRate / 60f);
 }

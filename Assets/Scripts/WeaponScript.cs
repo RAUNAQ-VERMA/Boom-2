@@ -15,7 +15,7 @@ public class WeaponScript : NetworkBehaviour
         followTransform = GetComponent<FollowPlayerScript>();
     }
     public static void SpawnWeapon(){
-        WeaponSpawnLogicScript.Instance.SpawnWeapon();
+        GameMultiplayerScript.Instance.SpawnWeapon();
     }
     public void SetWeaponParent(IWeaponParent weaponObjectParent)
     {
@@ -45,7 +45,6 @@ public class WeaponScript : NetworkBehaviour
         GetComponent<BoxCollider>().enabled = false;
         followTransform.SetTargetTransform(weaponObjectParent.GetWeaponHolderTransform());
         PlayerShootScript.OnWeaponChange(gunSO);
-        
     }
 
     public IWeaponParent GetWeaponParent(){
@@ -53,11 +52,11 @@ public class WeaponScript : NetworkBehaviour
     }
     public void Shoot(Transform cameraTransform)
     {
-        if(!IsOwner){
-            return;
-        }
-        this.cameraTransform = cameraTransform;
-        Shoot_ServerRpc();
+        // if(!IsOwner){
+        //     return;
+        // }
+        // this.cameraTransform = cameraTransform;
+        // Shoot_ServerRpc();
 
     }
     [ServerRpc(RequireOwnership =false)]
@@ -76,7 +75,7 @@ public class WeaponScript : NetworkBehaviour
                     if(hitInfo.transform.tag == "Player"){
                         PlayerScript player= GameManagerScript.Instance.GetPlayerFromId(hitInfo.transform.name);
                         ManageDamageScript damage = player.GetComponent<ManageDamageScript>();
-                        damage.ReciveDamage(gunSO,cameraTransform.forward);
+                       // damage.ReciveDamage(gunSO,cameraTransform.forward);
                        // DamageLogicScript.Instance.ReciveDamage(gunSO,transform.forward,hitInfo.transform.name.ToString());
                        // player.GetComponent<ManageDamageScript>().ReciveDamage(gunSO,cameraTransform.forward);
                     }

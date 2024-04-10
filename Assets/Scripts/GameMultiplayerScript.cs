@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class WeaponSpawnLogicScript : NetworkBehaviour
+public class GameMultiplayerScript : NetworkBehaviour
 {
     private Transform spawnedWeapon;
-    public static WeaponSpawnLogicScript Instance{get;private set;}
+    public static GameMultiplayerScript Instance{get;private set;}
 
     [SerializeField] private List<GameObject> weapons;
     [SerializeField] private List<Transform> weaponSpawnPoints;
@@ -16,6 +16,16 @@ public class WeaponSpawnLogicScript : NetworkBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
     }
+
+    public void StartHost(){
+        NetworkManager.Singleton.StartHost();
+    }
+    public void StartClient(){
+        NetworkManager.Singleton.StartClient();
+    }
+
+
+
     public void SpawnWeapon(){
         SpawnWeapon_ServerRpc();
     }

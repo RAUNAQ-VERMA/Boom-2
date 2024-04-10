@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,15 +12,15 @@ public class NetworkManagerUIScript : MonoBehaviour
     {
         serverButton.onClick.AddListener(() =>
         {
-            NetworkManager.Singleton.StartServer();
+            GameMultiplayerScript.Instance.StartHost();
         });
         hostButton.onClick.AddListener(() =>
         {
-            NetworkManager.Singleton.StartHost();
+            GameMultiplayerScript.Instance.StartHost();
         });
         clientButton.onClick.AddListener(() =>
         {
-            NetworkManager.Singleton.StartClient();
+            GameMultiplayerScript.Instance.StartClient();
         });
     }
 }

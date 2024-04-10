@@ -1,39 +1,23 @@
 using System;
-using Unity.Netcode;
 using UnityEngine;
 
-public class DamageLogicScript : NetworkBehaviour
+public class DamageLogicScript : MonoBehaviour
 {
     public static DamageLogicScript Instance{get;private set;}
-    public static EventHandler<int> OnDamage;
-    
+    ManageDamageScript damageLogic;
+    GunSO gunInfo;
+    Vector3 bulletTransform;
+    public static EventHandler<DamageEventArgs> OnDamage;
     void Start()
     {
         Instance = this;
     }
-    private GunSO gunInfo;
-    private Vector3 bulletDirection;
-    private String playerId;
-
-    public void ReciveDamage(GunSO gunInfo,Vector3 bulletDirection,String playerId){
-    //apply knockback
-    this.gunInfo = gunInfo;
-    this.bulletDirection = bulletDirection;
-    this.playerId = playerId;
-    ReciveDamage_ServerRpc();
-    }
-
-
-    [ServerRpc(RequireOwnership =false)]
-    public void ReciveDamage_ServerRpc(){
-        ReciveDamage_ClientRpc();
-    }
-
-    [ClientRpc]
-    public void ReciveDamage_ClientRpc(){
-   //   transform.position = knockback;
-      //  OnDamage?.Invoke(this,playerId);
-        GameManagerScript.Instance.OnDamageAction(gunInfo,bulletDirection,playerId);
-    //  player.ReciveDamage(bulletDirection, gunInfo);
+    public void ReciveDamage(GunSO gunInfo, Vector3 bulletTransform, string playerId){
+        PlayerScript player  = GameManagerScript.Instance.GetPlayerFromId(playerId);
+        damageLogic = player.transform.GetComponent<ManageDamageScript>();
+        this.gunInfo = gunInfo;
+        this.bulletTransform = bulletTransform;
+        damageLogic.ReciveDamage(bulletTransform,gunInfo);
+        
     }
 }

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
@@ -6,7 +5,7 @@ using UnityEngine.InputSystem;
 
 public class ManageWeaponScript : NetworkBehaviour
 {
-    [SerializeField] private WeaponSpawnLogicScript weaponSpawner;
+    [SerializeField] private GameMultiplayerScript weaponSpawner;
     [SerializeField]private List<GameObject> weapons;
     [SerializeField]private Transform weaponHolder;
     [SerializeField]private new Camera camera;

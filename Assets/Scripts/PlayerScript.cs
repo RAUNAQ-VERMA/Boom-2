@@ -33,6 +33,8 @@ public class PlayerScript : NetworkBehaviour,IWeaponParent
     private bool canEquipWeapon = false;
     private static bool isFirstPlayer = true;
 
+    Vector3 knockback;
+
     public override void OnNetworkSpawn()
     {
         LocalInstance =this;
@@ -45,6 +47,16 @@ public class PlayerScript : NetworkBehaviour,IWeaponParent
        // GameInput.Instance.OnAttackAction += GameInput_OnAttackAction;
         GameInput.Instance.OnJumpAction += GameInput_OnJumpAction;
         GameInput.Instance.OnPickUpAction += GameInput_OnPickUpAction;
+      //  PlayerShootScript.OnDamage+= OnDamage;
+    }
+
+    private void OnDamage(object sender, DamageEventArgs e)
+    {
+        if(transform.name == e.playerId){
+            knockback = transform.forward + (e.bulletTransform * e.gunInfo.damage);
+            controller.Move(knockback*Time.deltaTime);
+            Debug.Log(transform.name);
+        }
     }
 
     private void GameInput_OnPickUpAction(object sender, EventArgs e)
@@ -69,6 +81,9 @@ public class PlayerScript : NetworkBehaviour,IWeaponParent
 
     public void Update()
     {
+        if(!GameStateManagerScript.Instance.IsGamePlaying()){
+            return;
+        }
         if (!IsOwner) return;
 
         isOnGround = Physics.CheckSphere(groundDetector.position, groundDistance, layerMask);
@@ -145,11 +160,11 @@ public class PlayerScript : NetworkBehaviour,IWeaponParent
 
     public void SetIdAndTransformOfPlayer(){
         transform.SetPositionAndRotation(new Vector3(1,2,-16),new Quaternion(0,0,0,0));
-        playerInfo.id =2;
+        playerInfo.id =1;
         if(isFirstPlayer){
-            transform.SetPositionAndRotation(new Vector3(-1,2,-16),new Quaternion(0,0,0,0));
+            transform.SetPositionAndRotation(new Vector3(-1,-2,-16),new Quaternion(0,0,0,0));
             isFirstPlayer = false;
-            playerInfo.id =1;
+            playerInfo.id =0;
         }
     }
 
