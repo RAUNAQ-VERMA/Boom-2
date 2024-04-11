@@ -13,5 +13,8 @@ public class MainMenuCleanUpScript : MonoBehaviour
         if(GameMultiplayerScript.Instance!=null){
             Destroy(GameMultiplayerScript.Instance.gameObject);
         }
+        if(GameLobbyScript.Instance!=null){
+            Destroy(GameLobbyScript.Instance.gameObject);
+        }
     }
 }

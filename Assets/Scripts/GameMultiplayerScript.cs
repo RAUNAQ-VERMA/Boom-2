@@ -7,6 +7,7 @@ public class GameMultiplayerScript : NetworkBehaviour
     private Transform spawnedWeapon;
     public static GameMultiplayerScript Instance{get;private set;}
 
+    public static int MAX_PLAYER_AMOUNT = 2;
     [SerializeField] private List<GameObject> weapons;
     [SerializeField] private List<Transform> weaponSpawnPoints;
     // Start is called before the first frame update
@@ -23,8 +24,6 @@ public class GameMultiplayerScript : NetworkBehaviour
     public void StartClient(){
         NetworkManager.Singleton.StartClient();
     }
-
-
 
     public void SpawnWeapon(){
         SpawnWeapon_ServerRpc();

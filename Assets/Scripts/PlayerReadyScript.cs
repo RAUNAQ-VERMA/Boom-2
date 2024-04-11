@@ -28,6 +28,7 @@ public class PlayerReadyScript : NetworkBehaviour
             }
         }
         if(allClientsReady){
+            GameLobbyScript.Instance.DeleteLobby();
             Loader.LoadNetwork(Loader.Scene.GameScene);
         }
     }
