@@ -67,7 +67,6 @@ public class GameStateManagerScript : NetworkBehaviour
             case State.GameOver:
                 break; 
         }
-        Debug.Log(state.Value.ToString());
     }
 
     //call on clicking ready on the lobby scene(This was for the waiting for players... scene)

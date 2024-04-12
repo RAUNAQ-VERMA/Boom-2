@@ -27,7 +27,7 @@ public class CreateLobbyScript : MonoBehaviour
             error.text = "";
             GameLobbyScript.Instance.CreateLobby(lobbyName.text,false);
         });
-        createPublic.onClick.AddListener(()=>{
+        createPrivate.onClick.AddListener(()=>{
             if(lobbyName.text.IsNullOrEmpty()){
                 error.text = "Lobby Name cannot be empty";
                 return;
