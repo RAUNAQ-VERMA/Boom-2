@@ -1,16 +1,13 @@
+using TMPro;
 using UnityEngine;
 
 public class GameTimerUIScript : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
+    [SerializeField] private TMP_Text timerUI;
+    int timer;
     void Update()
     {
-        
+        timer = (int)GameStateManagerScript.Instance.GetGamePlayingTimer();
+        timerUI.SetText((int)timer/60+":"+(int)timer%60);
     }
 }

@@ -1,9 +1,11 @@
 using Unity.Netcode;
+using Unity.Services.Lobbies.Models;
 using UnityEngine;
 
 public class WeaponScript : NetworkBehaviour
 {
     [SerializeField] private GunSO gunSO;
+    [SerializeField] private ParticleSystem muzzleFlash;
 
     private float timeSinceLastShot;
 
@@ -11,11 +13,11 @@ public class WeaponScript : NetworkBehaviour
     private IWeaponParent weaponObjectParent;
 
     private FollowPlayerScript followTransform;
+    private void Start() {
+        gameObject.transform.position = new Vector3(0,-6,0);//change this to the weapon spawning location
+    }
     private void Awake() {
         followTransform = GetComponent<FollowPlayerScript>();
-    }
-    public static void SpawnWeapon(){
-        GameMultiplayerScript.Instance.SpawnWeapon();
     }
     public void SetWeaponParent(IWeaponParent weaponObjectParent)
     {
@@ -43,7 +45,7 @@ public class WeaponScript : NetworkBehaviour
 
         weaponObjectParent.SetCurrentWeapon(this);
         GetComponent<BoxCollider>().enabled = false;
-        followTransform.SetTargetTransform(weaponObjectParent.GetWeaponHolderTransform());
+        followTransform.SetTargetTransform(weaponObjectParent.GetWeaponHolderTransform(),PlayerScript.LocalInstance.GetCameraTransform());
         PlayerShootScript.OnWeaponChange(gunSO);
     }
 
@@ -57,7 +59,6 @@ public class WeaponScript : NetworkBehaviour
         // }
         // this.cameraTransform = cameraTransform;
         // Shoot_ServerRpc();
-
     }
     [ServerRpc(RequireOwnership =false)]
     private void Shoot_ServerRpc(){
@@ -91,5 +92,8 @@ public class WeaponScript : NetworkBehaviour
     {
         timeSinceLastShot += Time.deltaTime;
         Debug.DrawRay(transform.position, transform.forward);
+    }
+    public void PlayMuzzleFlash(){
+        muzzleFlash.Play();
     }
 }

@@ -1,21 +1,23 @@
 using System;
+using Unity.Netcode;
 using UnityEngine;
 
-public class WeaponSpawnerScript : MonoBehaviour
+public class WeaponSpawnerScript : NetworkBehaviour
 {
-    // Start is called before the first frame update
-
-    private float weaponSpawnTimer=180f;
+    private float weaponSpawnTimer=0f;
     void Start()
     {
         GameInput.Instance.OnTestAction += SpawnWeapon;
     }
     void Update()
     {   //This is the code for weapon spawntimer test and deploy in final build
-        // weaponSpawnTimer-=Time.deltaTime;
-        // if(weaponSpawnTimer%60==0){
-        //     SpawnWeapon();
-        // }
+        if(IsServer){
+            if(weaponSpawnTimer<=0){
+                SpawnWeapon();
+                weaponSpawnTimer = 30f;
+            }
+            weaponSpawnTimer-=Time.deltaTime;
+        }
     }
     private void SpawnWeapon(object sender, EventArgs e)
     {

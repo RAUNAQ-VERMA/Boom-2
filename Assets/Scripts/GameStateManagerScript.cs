@@ -22,7 +22,7 @@ public class GameStateManagerScript : NetworkBehaviour
     private bool isPlayerReady;
 
     private NetworkVariable<float> countdownToStartTimer =new NetworkVariable<float> (3f);
-    private NetworkVariable<float> gamePlayingTimer = new NetworkVariable<float>(5f);//change to 120f in final build 
+    private NetworkVariable<float> gamePlayingTimer = new NetworkVariable<float>(90f);//change to 120f in final build 
     public override void OnNetworkSpawn()
     {
         state.OnValueChanged+= State_OnValueChanged;
@@ -68,7 +68,8 @@ public class GameStateManagerScript : NetworkBehaviour
                 break; 
         }
     }
-
+    //MARK:Delete this
+    //this is not required delete on the final build
     //call on clicking ready on the lobby scene(This was for the waiting for players... scene)
     [ServerRpc(RequireOwnership =false)]
     private void SetPlayerReady_ServerRpc(ServerRpcParams rpcParams= default){
@@ -97,7 +98,13 @@ public class GameStateManagerScript : NetworkBehaviour
     public float GetCountdownToStartTimer(){
         return countdownToStartTimer.Value;
     }
+    public float GetGamePlayingTimer(){
+        return gamePlayingTimer.Value;
+    }
     public bool IsPlayerReady(){
         return isPlayerReady;
+    }
+    public void SetGameOver(){
+        state.Value = State.GameOver;
     }
 }

@@ -12,12 +12,12 @@ public class DamageLogicScript : MonoBehaviour
     {
         Instance = this;
     }
-    public void ReciveDamage(GunSO gunInfo, Vector3 bulletTransform, string playerId){
-        PlayerScript player  = GameManagerScript.Instance.GetPlayerFromId(playerId);
-        damageLogic = player.transform.GetComponent<ManageDamageScript>();
-        this.gunInfo = gunInfo;
-        this.bulletTransform = bulletTransform;
-        damageLogic.ReciveDamage(bulletTransform,gunInfo);
+    // public void ReciveDamage(GunSO gunInfo, Vector3 bulletTransform, string playerId){
+    //     PlayerScript player  = GameManagerScript.Instance.GetPlayerFromId(playerId);
+    //     damageLogic = player.transform.GetComponent<ManageDamageScript>();
+    //     this.gunInfo = gunInfo;
+    //     this.bulletTransform = bulletTransform;
+    //     damageLogic.ReciveDamage(bulletTransform,gunInfo);
         
-    }
+    // }
 }

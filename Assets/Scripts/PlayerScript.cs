@@ -14,6 +14,7 @@ public class PlayerScript : NetworkBehaviour,IWeaponParent
     
     
     private WeaponScript currentWeaponObject;
+    private WeaponScript availableWeaponObject;
 
     public static PlayerScript LocalInstance{get;private set;}
        
@@ -21,11 +22,11 @@ public class PlayerScript : NetworkBehaviour,IWeaponParent
     private bool isOnGround = false;
     private Vector3 verticalVelocity;
     private float movementSpeed = 10f;
-    public float groundDistance = 0.4f;
+    public float groundDistance = 1f;
     public float jumpHeight = 4f;
     private bool canJump = false;
     public float aimSensitivity = 0.5f;
-    private float xClamp = 85f;
+    private float xClamp = 55f;
     private float xRotation = 0f;
     private float xSensitivity = 8f, ySensitivity = 0.5f;
     private float gamepadRotation=0f;
@@ -33,7 +34,11 @@ public class PlayerScript : NetworkBehaviour,IWeaponParent
     private bool canEquipWeapon = false;
     private static bool isFirstPlayer = true;
 
+    public bool IsLoser = false;
+
     Vector3 knockback;
+
+    private bool isWalking= false;
 
     public override void OnNetworkSpawn()
     {
@@ -47,8 +52,10 @@ public class PlayerScript : NetworkBehaviour,IWeaponParent
        // GameInput.Instance.OnAttackAction += GameInput_OnAttackAction;
         GameInput.Instance.OnJumpAction += GameInput_OnJumpAction;
         GameInput.Instance.OnPickUpAction += GameInput_OnPickUpAction;
+      //  GameInput.Instance.OnAttackAction += GameInput_OnAttackAction;
       //  PlayerShootScript.OnDamage+= OnDamage;
     }
+
 
     private void OnDamage(object sender, DamageEventArgs e)
     {
@@ -73,9 +80,8 @@ public class PlayerScript : NetworkBehaviour,IWeaponParent
 
     private void GameInput_OnAttackAction(object sender, EventArgs e)
     {
-        if(IsOwner){
-           // currentWeaponObject.Shoot(cameraTransform);
-           gameObject.GetComponent<PlayerShootScript>().Shoot(cameraTransform);
+        if(IsOwner&&currentWeaponObject!=null){
+           currentWeaponObject.GetComponent<WeaponScript>().PlayMuzzleFlash();
         }
     }
 
@@ -117,6 +123,7 @@ public class PlayerScript : NetworkBehaviour,IWeaponParent
     private void ManageMovement()
     {
         Vector3 moveDirection = GameInput.Instance.GetMoveDirections();
+        isWalking = moveDirection!=Vector3.zero;
         Vector3 velocity = (transform.right * moveDirection.x + transform.forward * moveDirection.y) * movementSpeed;
         controller.Move(velocity  * Time.deltaTime);
     }
@@ -150,8 +157,8 @@ public class PlayerScript : NetworkBehaviour,IWeaponParent
     }
 
     private void Interact(PlayerScript player){
-        // weapon object is blank for client
         if(IsOwner){
+            currentWeaponObject = availableWeaponObject;
             SetCurrentWeapon(currentWeaponObject);
             Debug.Log("|"+currentWeaponObject + "||"+player+"|");
             currentWeaponObject.SetWeaponParent(player);
@@ -159,39 +166,54 @@ public class PlayerScript : NetworkBehaviour,IWeaponParent
     }
 
     public void SetIdAndTransformOfPlayer(){
-        transform.SetPositionAndRotation(new Vector3(1,2,-16),new Quaternion(0,0,0,0));
+        transform.SetPositionAndRotation(new Vector3(-1,6,16),new Quaternion(0,0,0,0));
         playerInfo.id =1;
         if(isFirstPlayer){
-            transform.SetPositionAndRotation(new Vector3(-1,-2,-16),new Quaternion(0,0,0,0));
+            transform.SetPositionAndRotation(new Vector3(-1,-2,-12),new Quaternion(0,0,0,0));
             isFirstPlayer = false;
             playerInfo.id =0;
         }
     }
 
+
+    //MARK:Do Damage
     public void DoDamage(Vector3 bulletDirection, GunSO gunInfo){
         Vector3 knockback = transform.forward + (bulletDirection * gunInfo.damage);
         controller.Move(knockback);
         knockback = Vector3.zero;
         Debug.Log(name);
     }
+    //MARK: GameOver
+    public void GameOver(){
+        IsLoser = true;
+        GameStateManagerScript.Instance.SetGameOver();
+    }
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.TryGetComponent<WeaponScript>(out currentWeaponObject))
+        if(other.gameObject.CompareTag("void"))
         {
-            canEquipWeapon = true;
+            GameOver();
+            
         }
+        canEquipWeapon = true;
+        other.TryGetComponent<WeaponScript>(out availableWeaponObject);
         
     }
     private void OnTriggerExit(Collider other)
     {
         canEquipWeapon = false;
+        availableWeaponObject = null;
     }
 
     public int GetPlayerId(){
         return playerInfo.id;
     }
     
+    public bool IsPlayerEmptyHanded(){
+        return currentWeaponObject==null;
+    }
+
     public Transform GetWeaponHolderTransform()
     {
         return weaponHolder;
@@ -204,7 +226,9 @@ public class PlayerScript : NetworkBehaviour,IWeaponParent
 
     public void ClearWeapon()
     {
-        throw new NotImplementedException();
+        //remove and delete weapon logic
+        currentWeaponObject = null;
+        //and despawn the object also stop it from following
     }
 
     public WeaponScript GetCurrentWeapon()
@@ -220,5 +244,15 @@ public class PlayerScript : NetworkBehaviour,IWeaponParent
     public void SetCurrentWeapon(WeaponScript weaponObject)
     {
         currentWeaponObject = weaponObject;
+    }
+
+    public bool IsWalking(){
+        return isWalking;
+    }
+    public bool IsHammerSwinging(){
+        return currentWeaponObject.gameObject.tag=="Hammer";
+    }
+    public Transform GetCameraTransform(){
+        return cameraTransform;
     }
 }

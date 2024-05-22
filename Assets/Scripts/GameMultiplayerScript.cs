@@ -10,7 +10,8 @@ public class GameMultiplayerScript : NetworkBehaviour
     public static int MAX_PLAYER_AMOUNT = 2;
     [SerializeField] private List<GameObject> weapons;
     [SerializeField] private List<Transform> weaponSpawnPoints;
-    // Start is called before the first frame update
+
+    int weaponIndex=0;
 
     void Awake()
     {
@@ -32,7 +33,8 @@ public class GameMultiplayerScript : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     private void SpawnWeapon_ServerRpc()
     {
-        spawnedWeapon = Instantiate(weapons[1].transform, weaponSpawnPoints[0]);
+        spawnedWeapon = Instantiate(weapons[weaponIndex%weapons.Count].transform, weaponSpawnPoints[0]);
+        weaponIndex++;
         NetworkObject spawnedWeaponNetworkObject = spawnedWeapon.GetComponent<NetworkObject>();
         spawnedWeaponNetworkObject.Spawn(true);
 

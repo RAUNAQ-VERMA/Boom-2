@@ -4,9 +4,11 @@ using UnityEngine;
 public class FollowPlayerScript : MonoBehaviour
 {
     private Transform targetTransform;
+    private Transform cameraTransform;
 
-    public void SetTargetTransform(Transform targetTransform){
+    public void SetTargetTransform(Transform targetTransform,Transform cameraTransform){
         this.targetTransform = targetTransform;
+        this.cameraTransform = cameraTransform;
     }
     void LateUpdate()
     {
@@ -14,6 +16,6 @@ public class FollowPlayerScript : MonoBehaviour
             return;
         }
         transform.position = targetTransform.position;
-        transform.rotation =  targetTransform.rotation;
+        transform.rotation =  cameraTransform.rotation;
     }
 }

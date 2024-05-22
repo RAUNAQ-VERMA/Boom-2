@@ -1,11 +1,15 @@
 using UnityEngine;
 using Unity.Netcode;
 using System;
+using Unity.Services.Lobbies.Models;
 
 public class PlayerShootScript : NetworkBehaviour
 {
-    
+    public static EventHandler<DamageEventArgs> OnDamage;
     private static GunSO gunSO;
+    DamageEventArgs damageInfo;
+     ManageDamageScript damage;
+     RaycastHit hitInfo;
     private float timeSinceLastShot;
     [SerializeField] private Transform cameraTransform;
     void Start()
@@ -15,7 +19,7 @@ public class PlayerShootScript : NetworkBehaviour
 
     private void OnAttackAction(object sender, EventArgs e)
     {
-        Shoot(cameraTransform);
+        Shoot();
     }
 
     public static void OnWeaponChange(GunSO gunSo){
@@ -26,38 +30,89 @@ public class PlayerShootScript : NetworkBehaviour
         timeSinceLastShot += Time.deltaTime;
     }
 
-    public void Shoot(Transform cameraTransform){
-        if(!IsOwner||gunSO==null){
+    public void Shoot(){
+        if(!IsOwner||gunSO==null||PlayerScript.LocalInstance.IsPlayerEmptyHanded()){
             return;
         }
         if (gunSO.currentAmmo > 0)
         {
             if (CanShoot())
             {
-                if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out RaycastHit hitInfo, gunSO.maxDistance))
+                PlayerScript.LocalInstance.GetCurrentWeapon().PlayMuzzleFlash();
+                if(PlayerScript.LocalInstance.GetCurrentWeapon().CompareTag("Shotgun"))
                 {
-                    Debug.Log(hitInfo.transform.name +" || " +hitInfo.transform.tag);
-                    if(hitInfo.transform.tag == "Player")
+                    if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hitInfo, gunSO.maxDistance))
                     {
-                        PlayerScript player= GameManagerScript.Instance.GetPlayerFromId(hitInfo.transform.name);
-                        ManageDamageScript damage = player.GetComponent<ManageDamageScript>();
-                        DamageEventArgs damageInfo = new()
+                        Debug.Log(hitInfo.transform.name +" || " +hitInfo.transform.tag);
+                        if(hitInfo.transform.CompareTag("Player"))
                         {
-                            playerId = hitInfo.transform.name,
-                            gunInfo = gunSO,
-                            bulletTransform = transform.forward
-                        };
-                        //OnDamage?.Invoke(this,damageInfo);
-                        DamageLogicScript.OnDamage?.Invoke(this , damageInfo);
-                        //damage.ReciveDamage(gunSO,cameraTransform.forward);
-                      //  DamageLogicScript.Instance.ReciveDamage(gunSO,transform.forward,hitInfo.transform.name.ToString());
-                       // player.GetComponent<ManageDamageScript>().ReciveDamage(gunSO,cameraTransform.forward);
+                            PlayerScript player= GameManagerScript.Instance.GetPlayerFromId(hitInfo.transform.name);
+                            damage = player.GetComponent<ManageDamageScript>();
+                            
+                            damageInfo = new()
+                            {
+                                playerId = hitInfo.transform.name,
+                                gunInfo = gunSO,
+                                bulletTransform = transform.forward
+                            };
+                            DamageEvent_ServerRpc();
+
+                            
+                            // DamageLogicScript.OnDamage?.Invoke(this , damageInfo);
+                            //damage.ReciveDamage(cameraTransform.forward,gunSO);
+                        // player.GetComponent<HealthBarUIScript>().Damage((int)gunSO.damage);
+                        //  DamageLogicScript.Instance.ReciveDamage(gunSO,transform.forward,hitInfo.transform.name.ToString());
+                        // player.GetComponent<ManageDamageScript>().ReciveDamage(gunSO,cameraTransform.forward);
+                        }
                     }
                 }
+                if(PlayerScript.LocalInstance.GetCurrentWeapon().CompareTag("Hammer"))
+                {
+                    PlayerAnimatorScript.Instance.HammerSwingAnimation();
+                    if (Physics.SphereCast(cameraTransform.position,gunSO.maxDistance,cameraTransform.forward,out hitInfo))
+                    {
+                        Debug.Log(hitInfo.transform.name +" || " +hitInfo.transform.tag);
+                        if(hitInfo.transform.CompareTag("Player"))
+                        {
+                            PlayerScript player= GameManagerScript.Instance.GetPlayerFromId(hitInfo.transform.name);
+                            damage = player.GetComponent<ManageDamageScript>();
+                            
+                            damageInfo = new()
+                            {
+                                playerId = hitInfo.transform.name,
+                                gunInfo = gunSO,
+                                bulletTransform = transform.forward
+                            };
+                            DamageEvent_ServerRpc();
+
+                            
+                            // DamageLogicScript.OnDamage?.Invoke(this , damageInfo);
+                            //damage.ReciveDamage(cameraTransform.forward,gunSO);
+                        // player.GetComponent<HealthBarUIScript>().Damage((int)gunSO.damage);
+                        //  DamageLogicScript.Instance.ReciveDamage(gunSO,transform.forward,hitInfo.transform.name.ToString());
+                        // player.GetComponent<ManageDamageScript>().ReciveDamage(gunSO,cameraTransform.forward);
+                        }
+                    }
+                }
+
                 gunSO.currentAmmo--;
                 timeSinceLastShot = 0;
             }
         }
     }
     private bool CanShoot() => !gunSO.reloading && timeSinceLastShot > 1f / (gunSO.fireRate / 60f);
+    [ServerRpc(RequireOwnership =false)]
+    private void SetDamageData_ServerRpc(){
+        damage.knockback.Value =  transform.forward * gunSO.damage;
+        damage.playerId.Value = (int)hitInfo.transform.name.ToCharArray()[^1] ;
+    }
+
+    [ServerRpc(RequireOwnership =false)]
+    private void DamageEvent_ServerRpc(){
+        DamageEvent_ClientRpc();
+    }
+    [ClientRpc]
+    private void DamageEvent_ClientRpc(){
+        OnDamage?.Invoke(this,damageInfo);
+    }
 }
