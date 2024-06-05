@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
+using Unity.Netcode.Components;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
 
-public class PlayerAnimatorScript : MonoBehaviour
+public class PlayerAnimatorScript : NetworkBehaviour
 {
     public static PlayerAnimatorScript Instance{get;private set;}
     [SerializeField] private Animator animator;
@@ -14,6 +16,9 @@ public class PlayerAnimatorScript : MonoBehaviour
     }
     void Update()
     {
+      if(!IsOwner){
+        return;
+      }
       if(PlayerScript.LocalInstance!=null){
         animator.SetBool("isWalking",PlayerScript.LocalInstance.IsWalking());
         animator.SetBool("hasWeapon",PlayerScript.LocalInstance.HasWeapon());

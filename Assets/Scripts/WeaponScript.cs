@@ -1,5 +1,4 @@
 using Unity.Netcode;
-using Unity.Services.Lobbies.Models;
 using UnityEngine;
 
 public class WeaponScript : NetworkBehaviour
@@ -10,6 +9,7 @@ public class WeaponScript : NetworkBehaviour
     private float timeSinceLastShot;
 
     private Transform cameraTransform;
+    private Transform playerCameraTransform;
     private IWeaponParent weaponObjectParent;
 
     private FollowPlayerScript followTransform;
@@ -19,9 +19,10 @@ public class WeaponScript : NetworkBehaviour
     private void Awake() {
         followTransform = GetComponent<FollowPlayerScript>();
     }
-    public void SetWeaponParent(IWeaponParent weaponObjectParent)
+    public void SetWeaponParent(IWeaponParent weaponObjectParent,Transform cameraTransform)
     {
         SetWeaponParent_ServerRpc(weaponObjectParent.GetNetworkObject());
+        this.playerCameraTransform = cameraTransform;
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -45,7 +46,7 @@ public class WeaponScript : NetworkBehaviour
 
         weaponObjectParent.SetCurrentWeapon(this);
         GetComponent<BoxCollider>().enabled = false;
-        followTransform.SetTargetTransform(weaponObjectParent.GetWeaponHolderTransform(),PlayerScript.LocalInstance.GetCameraTransform());
+        followTransform.SetTargetTransform(weaponObjectParent.GetWeaponHolderTransform(),playerCameraTransform);
         PlayerShootScript.OnWeaponChange(gunSO);
     }
 

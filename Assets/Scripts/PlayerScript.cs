@@ -15,7 +15,7 @@ public class PlayerScript : NetworkBehaviour,IWeaponParent
     
     private WeaponScript currentWeaponObject;
     private WeaponScript availableWeaponObject;
-
+    
     public static PlayerScript LocalInstance{get;private set;}
        
     [SerializeField] private float gravity = -19.81f;
@@ -69,7 +69,13 @@ public class PlayerScript : NetworkBehaviour,IWeaponParent
     private void GameInput_OnPickUpAction(object sender, EventArgs e)
     {
         if(canEquipWeapon){
-            Interact(this);
+            if(currentWeaponObject==null){
+                Interact(this);
+            }
+            else{
+                ClearWeapon();
+                Interact(this);
+            }
         }
     }
 
@@ -157,11 +163,11 @@ public class PlayerScript : NetworkBehaviour,IWeaponParent
     }
 
     private void Interact(PlayerScript player){
-        if(IsOwner){
+        if(IsOwner&&availableWeaponObject!= null){
             currentWeaponObject = availableWeaponObject;
             SetCurrentWeapon(currentWeaponObject);
             Debug.Log("|"+currentWeaponObject + "||"+player+"|");
-            currentWeaponObject.SetWeaponParent(player);
+            currentWeaponObject.SetWeaponParent(this,cameraTransform);
         }
     }
 
@@ -227,6 +233,7 @@ public class PlayerScript : NetworkBehaviour,IWeaponParent
     public void ClearWeapon()
     {
         //remove and delete weapon logic
+        GameMultiplayerScript.Instance.DespawnWeapon(currentWeaponObject);
         currentWeaponObject = null;
         //and despawn the object also stop it from following
     }

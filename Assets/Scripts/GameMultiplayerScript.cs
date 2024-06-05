@@ -5,6 +5,8 @@ using UnityEngine;
 public class GameMultiplayerScript : NetworkBehaviour
 {
     private Transform spawnedWeapon;
+
+    private WeaponScript currentWeapon;
     public static GameMultiplayerScript Instance{get;private set;}
 
     public static int MAX_PLAYER_AMOUNT = 2;
@@ -39,6 +41,16 @@ public class GameMultiplayerScript : NetworkBehaviour
         spawnedWeaponNetworkObject.Spawn(true);
 
         WeaponScript  weaponObject = spawnedWeapon.GetComponent<WeaponScript>();
+    }
+    public void DespawnWeapon(WeaponScript weapon){
+        this.currentWeapon = weapon;
+        DespawnWeapon_ServerRPC();
+    }
+    [ServerRpc(RequireOwnership =false)]
+    public void DespawnWeapon_ServerRPC(){
+        Destroy(currentWeapon);
+        currentWeapon.GetComponent<NetworkObject>().Despawn();
+        Debug.Log(currentWeapon.name+" despawned");
     }
     public Transform GetSpawnedWeapon(){
         return spawnedWeapon;

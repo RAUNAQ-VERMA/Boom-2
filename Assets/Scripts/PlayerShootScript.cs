@@ -1,10 +1,11 @@
 using UnityEngine;
 using Unity.Netcode;
 using System;
-using Unity.Services.Lobbies.Models;
 
 public class PlayerShootScript : NetworkBehaviour
 {
+    public static EventHandler OnShoot;
+    public static EventHandler OnHammerSwing;
     public static EventHandler<DamageEventArgs> OnDamage;
     private static GunSO gunSO;
     DamageEventArgs damageInfo;
@@ -12,6 +13,7 @@ public class PlayerShootScript : NetworkBehaviour
      RaycastHit hitInfo;
     private float timeSinceLastShot;
     [SerializeField] private Transform cameraTransform;
+    [SerializeField] private LayerMask playerLayer;
     void Start()
     {
         GameInput.Instance.OnAttackAction += OnAttackAction;
@@ -41,7 +43,8 @@ public class PlayerShootScript : NetworkBehaviour
                 PlayerScript.LocalInstance.GetCurrentWeapon().PlayMuzzleFlash();
                 if(PlayerScript.LocalInstance.GetCurrentWeapon().CompareTag("Shotgun"))
                 {
-                    if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hitInfo, gunSO.maxDistance))
+                    OnShoot?.Invoke(this,EventArgs.Empty);
+                    if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hitInfo, gunSO.maxDistance,playerLayer))
                     {
                         Debug.Log(hitInfo.transform.name +" || " +hitInfo.transform.tag);
                         if(hitInfo.transform.CompareTag("Player"))
@@ -68,8 +71,9 @@ public class PlayerShootScript : NetworkBehaviour
                 }
                 if(PlayerScript.LocalInstance.GetCurrentWeapon().CompareTag("Hammer"))
                 {
+                    OnHammerSwing?. Invoke(this,EventArgs.Empty);
                     PlayerAnimatorScript.Instance.HammerSwingAnimation();
-                    if (Physics.SphereCast(cameraTransform.position,gunSO.maxDistance,cameraTransform.forward,out hitInfo))
+                    if (Physics.SphereCast(cameraTransform.position,gunSO.maxDistance,cameraTransform.forward,out hitInfo,playerLayer))
                     {
                         Debug.Log(hitInfo.transform.name +" || " +hitInfo.transform.tag);
                         if(hitInfo.transform.CompareTag("Player"))
@@ -86,8 +90,8 @@ public class PlayerShootScript : NetworkBehaviour
                             DamageEvent_ServerRpc();
 
                             
-                            // DamageLogicScript.OnDamage?.Invoke(this , damageInfo);
-                            //damage.ReciveDamage(cameraTransform.forward,gunSO);
+                        // DamageLogicScript.OnDamage?.Invoke(this , damageInfo);
+                        //damage.ReciveDamage(cameraTransform.forward,gunSO);
                         // player.GetComponent<HealthBarUIScript>().Damage((int)gunSO.damage);
                         //  DamageLogicScript.Instance.ReciveDamage(gunSO,transform.forward,hitInfo.transform.name.ToString());
                         // player.GetComponent<ManageDamageScript>().ReciveDamage(gunSO,cameraTransform.forward);

@@ -2238,8 +2238,8 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 37270bb2ae841f847a883aee6d0ae6af, type: 3}
-  m_Resource: {fileID: 8300000, guid: 37270bb2ae841f847a883aee6d0ae6af, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 4756dbf872fc0cb4f89c3a74afe98981, type: 3}
+  m_Resource: {fileID: 8300000, guid: 4756dbf872fc0cb4f89c3a74afe98981, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -5502,7 +5502,6 @@ MonoBehaviour:
   weapons:
   - {fileID: 6977856626911784830, guid: 87c06b97de971594bad3f27d502dd259, type: 3}
   - {fileID: 70771245874770492, guid: 3baa5b7f4ff3c6a4890552431bf56392, type: 3}
-  - {fileID: 8485060973427325254, guid: 772e1bbe85e2bf04b9c80194c9f8eb0c, type: 3}
   weaponSpawnPoints:
   - {fileID: 0}
   - {fileID: 0}

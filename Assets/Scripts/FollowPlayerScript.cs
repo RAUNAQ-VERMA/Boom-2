@@ -12,10 +12,14 @@ public class FollowPlayerScript : MonoBehaviour
     }
     void LateUpdate()
     {
+        
         if(targetTransform == null){
             return;
         }
+        
         transform.position = targetTransform.position;
         transform.rotation =  cameraTransform.rotation;
+        Debug.Log(transform.name + "||" +targetTransform);
+
     }
 }
